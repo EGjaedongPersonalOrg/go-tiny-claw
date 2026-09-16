@@ -2,19 +2,13 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "type": "java",
-      "name": "Claw",
-      "request": "launch",
-      "mainClass": "com.egjaedong.tinyclaw.Claw",
-      "projectName": "java"
-    },
-    {
       "type": "go",
       "name": "Go: Claw",
       "request": "launch",
       "mode": "auto",
       "program": "${workspaceFolder}/go/cmd/claw",
-      "cwd": "${workspaceFolder}/go"
+      "cwd": "${workspaceFolder}/go",
+      "console": "integratedTerminal"
     },
     {
       "type": "java",
@@ -22,12 +16,27 @@
       "request": "launch",
       "mainClass": "com.egjaedong.tinyclaw.Claw",
       "projectName": "tiny-claw",
-      "cwd": "${workspaceFolder}",
-      "classPaths": [
-        "${workspaceFolder}/java/build/classes/java/main"
-      ],
-      "modulePaths": [],
-      "preLaunchTask": "gradle compileJava"
+      "cwd": "${workspaceFolder}/java",
+      "console": "integratedTerminal"
+    },
+    {
+      "type": "node",
+      "name": "TS: Claw",
+      "request": "launch",
+      "runtimeExecutable": "${workspaceFolder}/ts/node_modules/.bin/tsx",
+      "args": ["src/claw.ts"],
+      "cwd": "${workspaceFolder}/ts",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Python: Claw",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "tiny_claw",
+      "cwd": "${workspaceFolder}/python",
+      "python": "${workspaceFolder}/python/.venv/bin/python",
+      "console": "integratedTerminal",
+      "justMyCode": true
     }
   ]
 }

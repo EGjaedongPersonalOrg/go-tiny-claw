@@ -2,14 +2,21 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "gradle compileJava",
+      "label": "gradle run",
       "type": "shell",
-      "command": "gradle compileJava",
+      "command": "./gradlew run",
       "options": {
-        "cwd": "${workspaceFolder}/java",
-        "env": {
-          "JAVA_HOME": "/opt/homebrew/opt/openjdk"
-        }
+        "cwd": "${workspaceFolder}/java"
+      },
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "go run",
+      "type": "shell",
+      "command": "go run ./cmd/claw",
+      "options": {
+        "cwd": "${workspaceFolder}/go"
       },
       "group": "build",
       "problemMatcher": []

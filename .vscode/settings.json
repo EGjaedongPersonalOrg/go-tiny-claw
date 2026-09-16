@@ -1,5 +1,5 @@
 {
-  // 本仓库只关 Cursor Tab（AI 灰字补全），保留语言服务的方法名/调用补全。
+  // 仅本仓库关 Cursor Tab（AI 灰字补全），不影响其他项目。
   "editor.inlineSuggest.enabled": false,
   "cursor.cpp.disabledLanguages": [
     "go",
@@ -20,22 +20,11 @@
   "java.import.maven.enabled": false,
   "java.configuration.updateBuildConfiguration": "automatic",
   "java.configuration.detectJdksAtStart": true,
-  // JDT LS 跑在 JDK 26 上会丢系统库（找不到 java.lang.Object）
-  "java.jdt.ls.java.home": "/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home",
-  "java.import.gradle.java.home": "/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home",
   "java.jdt.ls.lombokSupport.enabled": true,
   "[java]": {
     "editor.defaultFormatter": "redhat.java"
   },
-  "java.configuration.runtimes": [
-    {
-      "name": "JavaSE-17",
-      "path": "/Library/Java/JavaVirtualMachines/jdk-17.jdk/Contents/Home"
-    },
-    {
-      "name": "JavaSE-21",
-      "path": "/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home",
-      "default": true
-    }
-  ]
+  "python.defaultInterpreterPath": "${workspaceFolder}/python/.venv/bin/python",
+  "python.analysis.extraPaths": ["${workspaceFolder}/python/src"],
+  "typescript.tsdk": "ts/node_modules/typescript/lib"
 }
