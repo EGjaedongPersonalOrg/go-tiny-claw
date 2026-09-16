@@ -14,23 +14,23 @@ type BashTool struct {
 	workDir string
 }
 
-func NewBashTool(workDir string) *BashTool{
+func NewBashTool(workDir string) *BashTool {
 	return &BashTool{workDir: workDir}
 }
 
-func (tool *BashTool) Name() string{
+func (tool *BashTool) Name() string {
 	return "bash"
 }
 
 func (tool *BashTool) Definition() schema.ToolDefinition {
 	return schema.ToolDefinition{
-		Name: tool.Name(),
+		Name:        tool.Name(),
 		Description: "在当前工作区执行任意的 bash 命令。支持链式命令(如 &&)。返回标准输出(stdout)和标准错误(stderr)。",
 		InputSchema: map[string]interface{}{
 			"type": "object",
 			"properties": map[string]interface{}{
 				"command": map[string]interface{}{
-					"type": "string",
+					"type":        "string",
 					"description": "要执行的 bash 命令，例如: ls -la 或者 go test ./...",
 				},
 			},

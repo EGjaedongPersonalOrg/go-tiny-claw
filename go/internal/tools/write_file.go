@@ -57,7 +57,7 @@ func (tool *WriteFileTool) Execute(ctx context.Context, args json.RawMessage) (s
 	// 【安全防线】：限制在 WorkDir 下执行，防止大模型修改系统级文件
 	fullPath := filepath.Join(tool.workDir, input.Path)
 
-	// 自动创建却是的父级目录
+	// 自动创建缺失的父级目录
 	if err := os.MkdirAll(filepath.Dir(fullPath), 0755); err != nil {
 		return "", fmt.Errorf("创建父级目录失败: %w", err)
 	}
