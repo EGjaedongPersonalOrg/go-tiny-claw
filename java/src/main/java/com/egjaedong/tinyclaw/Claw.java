@@ -1,16 +1,15 @@
 package com.egjaedong.tinyclaw;
 
-import com.egjaedong.tinyclaw.provider.OpenaiProvider;
-import com.egjaedong.tinyclaw.tools.BashTool;
-import com.egjaedong.tinyclaw.tools.ReadFileTool;
-import com.egjaedong.tinyclaw.tools.RegistryImpl;
-import com.egjaedong.tinyclaw.tools.WriteFileTool;
-
 import java.nio.file.Path;
 
 import com.egjaedong.tinyclaw.engine.AgentEngine;
 import com.egjaedong.tinyclaw.provider.LlmProvider;
+import com.egjaedong.tinyclaw.provider.OpenaiProvider;
+import com.egjaedong.tinyclaw.tools.BashTool;
+import com.egjaedong.tinyclaw.tools.ReadFileTool;
 import com.egjaedong.tinyclaw.tools.Registry;
+import com.egjaedong.tinyclaw.tools.RegistryImpl;
+import com.egjaedong.tinyclaw.tools.WriteFileTool;
 
 /**
  * 入口。对照 {@code go/cmd/claw/main.go}。
@@ -35,7 +34,6 @@ public final class Claw {
                 2. 帮我写一个简单的 HelloWorld.java 文件，输出 "Hello, java-tiny-claw!"。
                 3. 用 bash 编译并运行这个 java 文件，确认它能正常工作。
                                """;
-        ;
         agentEngine.run(prompt);
         System.out.println("任务完成！");
     }
