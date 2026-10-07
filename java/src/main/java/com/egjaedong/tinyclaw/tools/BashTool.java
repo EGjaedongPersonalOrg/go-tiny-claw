@@ -7,8 +7,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.lang3.tuple.Pair;
-
 import com.egjaedong.tinyclaw.schema.ToolDefinition;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -56,16 +54,16 @@ public class BashTool implements BaseTool {
     }
 
     @Override
-    public Pair<String, Boolean> execute(String arguments) {
+    public ExecResult execute(String arguments) {
         BashArgs input;
         try {
             input = jsonMapper().readValue(arguments, BashArgs.class);
         } catch (JsonProcessingException e) {
-            return Pair.of("参数解析失败：" + e.getMessage(), false);
+            return new ExecResult("参数解析失败：" + e.getMessage(), false);
         }
 
         if (input.command == null | input.command.isBlank()) {
-            return Pair.of("command 为空，未执行任何命令：", false);
+            return new ExecResult("command 为空，未执行任何命令：", false);
         }
 
         // 【底线1】超时：防止 top / 常驻 web 把引擎卡死
@@ -79,7 +77,7 @@ public class BashTool implements BaseTool {
         try {
             process = pb.start();
         } catch (IOException e) {
-            return Pair.of("启动进程失败：" + e.getMessage(), false);
+            return new ExecResult("启动进程失败：" + e.getMessage(), false);
         }
 
         boolean finished;
@@ -88,7 +86,7 @@ public class BashTool implements BaseTool {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             process.destroyForcibly();
-            return Pair.of("执行被中断：" + e.getMessage(), false);
+            return new ExecResult("执行被中断：" + e.getMessage(), false);
         }
 
         if (!finished) {
@@ -99,32 +97,32 @@ public class BashTool implements BaseTool {
                 Thread.currentThread().interrupt();
             }
             var partial = readOutput(process);
-            return Pair.of(
+            return new ExecResult(
                     partial + "\n[警告: 命令执行超时(" + TIMEOUT_SECONDS
                             + "s)，已被系统强制终止。如果是启动常驻服务，请尝试将其转入后台。]",
-                    true); // 对照 Go：超时也是 (字符串, nil)，不阻断循环)
+                    true); // 对照 Go：超时也是 (字符串, nil)，不阻断循环
         }
 
         var output = readOutput(process);
 
         // 【底线3】bash 失败不要当成工具崩溃：把报错文本交给模型自愈
         if (process.exitValue() != 0) {
-            return Pair.of("执行报错：exit" + process.exitValue() + "\n输出：\n" + output, true);
+            return new ExecResult("执行报错：exit" + process.exitValue() + "\n输出：\n" + output, true);
         }
 
         if (output.isEmpty()) {
-            return Pair.of("命令执行成功，无终端输出。", true);
+            return new ExecResult("命令执行成功，无终端输出。", true);
         }
 
         // 【底线4】截断，防止上下文被刷爆
         if (output.length() > MAX_LEN) {
-            return Pair.of(
+            return new ExecResult(
                     output.substring(0, MAX_LEN)
                             + "\n\n...[终端输出过长，已截断至前 " + MAX_LEN + " 字节]...",
                     true);
         }
 
-        return Pair.of(output, true);
+        return new ExecResult(output, true);
     }
 
     private static String readOutput(Process process) {

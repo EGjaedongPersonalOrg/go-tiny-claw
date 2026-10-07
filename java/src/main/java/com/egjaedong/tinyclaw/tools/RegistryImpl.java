@@ -8,8 +8,6 @@ import java.util.Map;
 import com.egjaedong.tinyclaw.schema.ToolCall;
 import com.egjaedong.tinyclaw.schema.ToolDefinition;
 import com.egjaedong.tinyclaw.schema.ToolResult;
-import org.apache.commons.lang3.tuple.Pair;
-
 
 public class RegistryImpl implements Registry {
 
@@ -38,14 +36,9 @@ public class RegistryImpl implements Registry {
         }
 
         // 2. 执行工具
-        Pair<String, Boolean> results = tool.execute(toolCall.getArguments());
+        ExecResult result = tool.execute(toolCall.getArguments());
 
-        // 3. 返回结果
-        Boolean isSuccess = results.getRight();
-        if (isSuccess) {
-            return new ToolResult(toolCall.getId(), results.getLeft(), false);
-        } else {
-            return new ToolResult(toolCall.getId(), results.getLeft(), true);
-        }
+        // 3. 补上 toolCallId，isError 与工具层同向
+        return new ToolResult(toolCall.getId(), result.output(), !result.isSuccess());
     }
 }

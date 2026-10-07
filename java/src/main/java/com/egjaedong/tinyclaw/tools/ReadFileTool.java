@@ -8,7 +8,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
-import org.apache.commons.lang3.tuple.Pair;
 
 public class ReadFileTool implements BaseTool {
 
@@ -46,16 +45,16 @@ public class ReadFileTool implements BaseTool {
     }
 
     @Override
-    public Pair<String, Boolean> execute(String arguments) {
+    public ExecResult execute(String arguments) {
         ReadFileArgs input;
         try {
             input = jsonMapper().readValue(arguments, ReadFileArgs.class);
         } catch (JsonProcessingException e) {
-            return Pair.of("参数解析失败：" + e.getMessage(), false);
+            return new ExecResult("参数解析失败：" + e.getMessage(), false);
         }
 
         if (input.path == null || input.path.isBlank()) {
-            return Pair.of("路径为空，未读取任何内容。", false);
+            return new ExecResult("路径为空，未读取任何内容。", false);
         }
         var fullPath = Paths.get(this.workDir).resolve(input.path);
 
@@ -64,7 +63,7 @@ public class ReadFileTool implements BaseTool {
         try (InputStream is = java.nio.file.Files.newInputStream(fullPath)) {
             bytes = is.readNBytes(maxLen);
         } catch (Exception e) {
-            return Pair.of("读取文件失败：" + e.getMessage(), false);
+            return new ExecResult("读取文件失败：" + e.getMessage(), false);
         }
         var content = new String(bytes, StandardCharsets.UTF_8);
         var contentResult = content;
@@ -72,7 +71,7 @@ public class ReadFileTool implements BaseTool {
             contentResult = String.format("%s\n\n...[由于内容过长，已被系统截断至前 %d 字节...]",
                     content, maxLen);
         }
-        return Pair.of(contentResult, true);
+        return new ExecResult(contentResult, true);
     }
 
     private record ReadFileArgs(String path) {

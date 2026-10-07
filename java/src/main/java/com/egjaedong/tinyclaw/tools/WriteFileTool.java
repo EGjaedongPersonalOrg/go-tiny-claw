@@ -7,8 +7,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.attribute.PosixFilePermissions;
 
-import org.apache.commons.lang3.tuple.Pair;
-
 import com.egjaedong.tinyclaw.schema.ToolDefinition;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -59,16 +57,16 @@ public class WriteFileTool implements BaseTool {
     }
 
     @Override
-    public Pair<String, Boolean> execute(String arguments) {
+    public ExecResult execute(String arguments) {
         WriteFileArgs input;
         try {
             input = jsonMapper().readValue(arguments, WriteFileArgs.class);
         } catch (JsonProcessingException e) {
-            return Pair.of("参数解析失败：" + e.getMessage(), false);
+            return new ExecResult("参数解析失败：" + e.getMessage(), false);
         }
 
         if (input.path() == null || input.path().isBlank()) {
-            return Pair.of("路径为空，未写入任何内容。", false);
+            return new ExecResult("路径为空，未写入任何内容。", false);
         }
 
         // 【安全防线】：限制在 WorkDir 下执行，防止大模型修改系统级文件
@@ -79,7 +77,7 @@ public class WriteFileTool implements BaseTool {
             Files.createDirectories(fullPath.getParent(),
                     PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rwxr-xr-x")));
         } catch (IOException e) {
-            return Pair.of("创建父级目录失败:" + e.getMessage(), false);
+            return new ExecResult("创建父级目录失败:" + e.getMessage(), false);
         }
 
         // 写入文件内容，权限设置为 064
@@ -87,10 +85,10 @@ public class WriteFileTool implements BaseTool {
             Files.writeString(fullPath, input.content());
             Files.setPosixFilePermissions(fullPath, PosixFilePermissions.fromString("rw-r--r--"));
         } catch (Exception e) {
-            return Pair.of("写入文件失败:" + e.getMessage(), false);
+            return new ExecResult("写入文件失败:" + e.getMessage(), false);
         }
 
-        return Pair.of("成功写入文件" + input.path(), true);
+        return new ExecResult("成功写入文件" + input.path(), true);
     }
 
     private record WriteFileArgs(String path, String content) {

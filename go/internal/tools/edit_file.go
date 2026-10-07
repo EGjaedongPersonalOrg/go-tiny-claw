@@ -86,13 +86,13 @@ func fuzzyReplace(originalContent, oldText, newText string) (string, error) {
 	}
 
 	// L4: 逐行匹配缩进（最强力的容错：消除大模型遗漏缩进的幻觉）
-	return lineByLineReplace(normalizedContent, normalizedOld, newText)
+	return lineByLineReplace(normalizedContent, trimmedOld, newText)
 }
 
 // lineByLineReplace 将文本逐行切割，去除首位空白后进行滑动窗口匹配
 func lineByLineReplace(content, oldText, newText string) (string, error) {
 	contentLines := strings.Split(content, "\n")
-	oldLines := strings.Split(strings.TrimSpace(oldText), "\n")
+	oldLines := strings.Split(oldText, "\n")
 
 	if len(oldLines) == 0 || len(contentLines) < len(oldLines) {
 		return "", fmt.Errorf("找不到该代码片段")
